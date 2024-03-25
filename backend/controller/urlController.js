@@ -9,7 +9,7 @@ const handleGenerateNewShortUrl = async (req, res) => {
     }
     const short_id = shortid(8)
     await URL.create({
-        shorid:short_id,
+        shortid:short_id,
         redirectUrl:body.url,
         visitHistory:[]
         
@@ -19,6 +19,22 @@ const handleGenerateNewShortUrl = async (req, res) => {
 
 }
 
+const handleGetUrl = async (req, res) => {
+    const shortid = req.params.id
+    const entry = await URL.findOneAndUpdate({
+        shortid
+    },{
+        $push:{
+            visitHistory:{
+                timestamp: Date.now()
+            }
+        }
+    })
+   
+    res.redirect(entry.redirectUrl)
+}
+
 module.exports = {
-    handleGenerateNewShortUrl
+    handleGenerateNewShortUrl,
+    handleGetUrl
 }
